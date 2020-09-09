@@ -6,12 +6,6 @@ import collections
 from scipy import stats
 from scipy.stats import entropy
 
-
-N = 2000
-G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
-G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
-
-
 def get_distribution(G):
     nodes_degree = list(dict(G.degree(G.nodes)).values())
     degree_distribution = nodes_degree/np.sum(nodes_degree)
@@ -85,18 +79,20 @@ def matrix_sign(old_l, new_l, N, p = 0.0001):
     
     return sign_H
 
-def compute_X(sign_of_H):
-    tmp = 1/2 * (sign_of_H + np.identity(2*N))
+def compute_E(old_l,new_l,N,p=0.0001):
+    sign_H = matrix_sign(old_l,new_l,N,p=0.0001)
+    tmp = 1/2 * (sign_H + np.identity(2*N))
     X = tmp[:N,N:]
     return X
 
-def compute_E(old_l,new_l,N,p=0.0001):
-    sign_H = matrix_sign(old_l,new_l,N,p=0.0001)
-    X = compute_X(sign_H)
-    return X
-
-def norm_X(X):
+def mat_norm(X):
     return np.sum(np.power(np.absolute(X),2))
+    
+def deg_count(G):
+    degree_sequence = sorted([d for n, d in G.degree()], reverse=True)  # degree sequence
+    degreeCount = collections.Counter(degree_sequence)
+    deg, cnt = zip(*degreeCount.items())
+    return deg, cnt
 
 def deg_distribution(deg,cnt,size):
     deg = np.flip(list(deg))
@@ -105,6 +101,7 @@ def deg_distribution(deg,cnt,size):
     deg_dis = np.zeros(size,dtype=float)
     for i in range(len(deg)):
         deg_dis[deg[i]]= cnt_dis[i]
+    deg = deg + np.finfo(np.float32).eps
     return deg_dis
 
 def KL_div(deg1,cnt1,deg2,cnt2):
@@ -113,6 +110,15 @@ def KL_div(deg1,cnt1,deg2,cnt2):
     new_dis = deg_distribution(deg2,cnt2,size)
     return entropy(old_dis,new_dis)
 
+N = 2000
+
+'''If original graph is BA graph'''
+G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
+G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
+
+'''If original graph is small world graph'''
+G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3)
+G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3)
 
 laplacian_mat_original = nx.laplacian_matrix(G_1)
 laplacian_mat_original = laplacian_mat_original.todense()
@@ -120,6 +126,10 @@ laplacian_mat_original = laplacian_mat_original.todense()
 adj_original = nx.adjacency_matrix(G_1)
 adj_original = adj_original.todense()
 
+norm_laplacian_original = nx.normalized_laplacian_matrix(G_1)
+norm_laplacian_original = norm_laplacian_original.todense()
+
+deg,cnt = deg_count(G_1)
 
 num_edges = 1000
 
@@ -137,13 +147,38 @@ adj_mat_1 = adj_mat_1.todense()
 adj_mat_2 = nx.adjacency_matrix(G_2)
 adj_mat_2 = adj_mat_2.todense()
 
+norm_laplacian_1 = nx.normalized_laplacian_matrix(G_1)
+norm_laplacian_1 = norm_laplacian_original.todense()
+norm_laplacian_2 = nx.normalized_laplacian_matrix(G_2)
+norm_laplacian_2 = norm_laplacian_original.todense()
+
+'''If S is laplacian matrix'''
+print('If S is laplacian matrix:')
 
 E_1 = compute_E(laplacian_mat_original,laplacian_mat_1,N)
+print('Norm of E under preferential attachment:', mat_norm(E_1))
 E_2 = compute_E(laplacian_mat_original,laplacian_mat_2,N)
+print('Norm of E under small world',mat_norm(E_2))
+
+print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
+
+'''If S is normalized laplacian matrix'''
+print('If S is normalized laplacian matrix:')
+
+E_1 = compute_E(norm_laplacian_original,norm_laplacian_1,N)
+print('Norm of E under preferential attachment:', mat_norm(E_1))
+E_2 = compute_E(norm_laplacian_original,norm_laplacian_2,N)
+print('Norm of E under small world',mat_norm(E_2))
+
+print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
+
+deg1, cnt1 = deg_count(G_1)
+deg2, cnt2 = deg_count(G_2)
+print('KL-div under preferential attachment', KL_div(deg,cnt,deg1,cnt1))
+print('KL-div under small world', KL_div(deg,cnt,deg2,cnt2))
 
 
-print(norm_X(E_1),norm_X(E_2))
-
+'''
 np.sum(np.power(laplacian_mat_1-laplacian_mat_original,2))
 
 np.sum(np.power(laplacian_mat_2-laplacian_mat_original,2))
@@ -152,6 +187,6 @@ np.sum(np.power(adj_mat_1-adj_original,2))
 
 np.sum(np.power(adj_mat_2-adj_original,2))
 
-
+'''
 
 
