@@ -196,8 +196,8 @@ for batch in range(num_batch):
     print('KL-div under preferential attachment', KL_div(deg,cnt,deg1,cnt1))
     print('KL-div under small world', KL_div(deg,cnt,deg2,cnt2))
 
-    print('KL-div & Preferential attachment: {}'.format(KL_div(deg,cnt,deg1,cnt1)))
-    print('KL-div & Small world: {}'.format(KL_div(deg,cnt,deg1,cnt1)))
+    print('KL-div & Preferential attachment: {}'.format(KL_div(deg,cnt,deg1,cnt1)),file=output)
+    print('KL-div & Small world: {}'.format(KL_div(deg,cnt,deg1,cnt1)),file=output)
 
 output.close()
 
