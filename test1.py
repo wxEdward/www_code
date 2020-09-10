@@ -133,7 +133,7 @@ deg,cnt = deg_count(G_1)
 
 output = open('test1.txt','w')
 
-for num_edges in np.arange(1000,3200,200):
+for num_edges in np.arange(1000,3200,300):
 
     for i in range(num_edges):
         G1 = preferential_add(G_1)
@@ -160,38 +160,41 @@ for num_edges in np.arange(1000,3200,200):
     '''If S is laplacian matrix'''
     print(' If S is laplacian matrix:')
     print(' If S is laplacian matrix:',file = output)
+    
     E_1 = compute_E(laplacian_mat_original,laplacian_mat_1,N)
-    print('Norm of E under preferential attachment:', mat_norm(E_1))
+    print('Norm(E) & Preferential attachment:', mat_norm(E_1))
+    print('Norm(E) & Preferential attachment:{}'.format(mat_norm(E_1),file=output)
+    
     E_2 = compute_E(laplacian_mat_original,laplacian_mat_2,N)
-    print('Norm of E under small world',mat_norm(E_2))
+    print('Norm(E) & Small world:',mat_norm(E_2))
+    print('Norm(E) & Small world:{}'.format(mat_norm(E_2)),file=output)
 
     print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
+    print('E_1 over E_2:{}'.format(mat_norm(E_1)/mat_norm(E_2)),file=output)
 
     '''If S is normalized laplacian matrix'''
-    print('If S is normalized laplacian matrix:')
+    print(' If S is normalized laplacian matrix:')
+    print(' If S is normalized laplacian matrix:',file=output)
 
     E_1 = compute_E(norm_laplacian_original,norm_laplacian_1,N)
-    print('Norm of E under preferential attachment:', mat_norm(E_1))
+    print('Norm(E) & Preferential attachment:', mat_norm(E_1))
+    print('Norm(E) & Preferential attachment:{}'.format(mat_norm(E_1)),file=output)
+    
     E_2 = compute_E(norm_laplacian_original,norm_laplacian_2,N)
-    print('Norm of E under small world',mat_norm(E_2))
+    print('Norm(E) & Small world:',mat_norm(E_2))
+    print('Norm(E) & Small world:{}'.format(mat_norm(E_2)),file=output)
 
     print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
-
+    print('E_1 over E_2:{}'.format(mat_norm(E_1)/mat_norm(E_2)),file=output)
+    
     deg1, cnt1 = deg_count(G_1)
     deg2, cnt2 = deg_count(G_2)
     print('KL-div under preferential attachment', KL_div(deg,cnt,deg1,cnt1))
     print('KL-div under small world', KL_div(deg,cnt,deg2,cnt2))
 
+    print('KL-div & Preferential attachment: {}'.format(KL_div(deg,cnt,deg1,cnt1)))
+    print('KL-div & Small world: {}'.format(KL_div(deg,cnt,deg1,cnt1)))
 
-'''
-np.sum(np.power(laplacian_mat_1-laplacian_mat_original,2))
-
-np.sum(np.power(laplacian_mat_2-laplacian_mat_original,2))
-
-np.sum(np.power(adj_mat_1-adj_original,2))
-
-np.sum(np.power(adj_mat_2-adj_original,2))
-
-'''
+output.close()
 
 
