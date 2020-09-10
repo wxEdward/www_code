@@ -11,7 +11,7 @@ def get_distribution(G):
     degree_distribution = nodes_degree/np.sum(nodes_degree)
     return degree_distribution
 
-def preferential_add(G,t):
+def preferential_add(G):
     nodes_list = list(G.nodes)
     num_nodes = len(nodes_list)
     distribution = get_distribution(G)
@@ -23,11 +23,11 @@ def preferential_add(G,t):
             target = i
             break
     if (source,target) in G.edges:
-        preferential_add(G,t)
-    G.add_edge(source,target,timestamp=t)
+        preferential_add(G)
+    G.add_edge(source,target)
     return G
 
-def small_world_add(G,t,k=6):
+def small_world_add(G,k=6):
     nodes_list = list(G.nodes)
     
     if k%2 == 0:
@@ -60,9 +60,30 @@ def small_world_add(G,t,k=6):
         choices.remove(source)
         target = np.random.choice(choices)
         
-    G.add_edge(source,target,timestamp=t)
+    G.add_edge(source,target)
     
     return G
+    
+def matrix_sign(old_l, new_l, N, p = 0.0001):
+
+    I = np.identity(N)
+    C = old_l-new_l
+    A = old_l+p*I
+    H = np.zeros((2*N,2*N))
+    
+    H[:N,:N] = A
+    H[:N,N:] = C
+    H[N:,N:] = -A
+    
+    sign_H = H @ (scipy.linalg.sqrtm(H @ H) @ np.linalg.inv(H))
+    
+    return sign_H
+
+def compute_E(old_l,new_l,N,p=0.0001):
+    sign_H = matrix_sign(old_l,new_l,N,p=0.0001)
+    tmp = 1/2 * (sign_H + np.identity(2*N))
+    X = tmp[:N,N:]
+    return X
 
 def mat_norm(X):
     return np.sum(np.power(np.absolute(X),2))
@@ -91,9 +112,10 @@ def KL_div(deg1,cnt1,deg2,cnt2):
 
 N = 5000
 
-num_batch = 8
+output = open('test1.txt','w')
+
+num_batch = 6
 edges_per_batch = 600
-p = 0.0001
 
 '''If original graph is BA graph'''
 #G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
@@ -102,33 +124,28 @@ p = 0.0001
 '''If original graph is small world graph'''
 G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
 G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
-nx.set_edge_attributes(G_1,0,'timestamp‘)
-nx.set_edge_attributes(G_2,0,'timestamp')
-
-nx.write_gpickle(G_1,'ws_ori.gpickle')
 
 laplacian_mat_original = nx.laplacian_matrix(G_1)
 laplacian_mat_original = laplacian_mat_original.todense()
-l_ori = laplacian_mat_original + np.identity(N)*p
 
 adj_original = nx.adjacency_matrix(G_1)
 adj_original = adj_original.todense()
 
 norm_laplacian_original = nx.normalized_laplacian_matrix(G_1)
 norm_laplacian_original = norm_laplacian_original.todense()
-nl_ori = norm_laplacian_original + np.identity(N)*p
 
 deg,cnt = deg_count(G_1)
 
 for batch in range(num_batch):
 
     for i in range(edges_per_batch):
-        G1 = preferential_add(G_1,batch+1)
-        G2 = small_world_add(G_2,batch+1)
+        G1 = preferential_add(G_1)
+        G2 = small_world_add(G_2)
         #if i%200 == 0 and i!=0:
          #   print('%d edges added'%i)
     edges_added = (batch+1)*edges_per_batch
     print('%d edges added'%edges_added)
+    print('{} edges added'.format(edges_added),file=output)
     laplacian_mat_1 = nx.laplacian_matrix(G_1)
     laplacian_mat_1 = laplacian_mat_1.todense()
     laplacian_mat_2 = nx.laplacian_matrix(G_2)
@@ -146,31 +163,42 @@ for batch in range(num_batch):
 
     '''If S is laplacian matrix'''
     print(' If S is laplacian matrix:')
+    print(' If S is laplacian matrix:',file = output)
     
-    E_1 = scipy.linalg.solve_sylvester(l_ori,l_ori,laplacian_mat_1-laplacian_mat_original)
+    E_1 = compute_E(laplacian_mat_original,laplacian_mat_1,N)
     print('Norm(E) & Preferential attachment:', mat_norm(E_1))
+    print('Norm(E) & Preferential attachment:{}'.format(mat_norm(E_1),file=output)
     
-    E_2 = scipy.linalg.solve_sylvester(l_ori,l_ori,laplacian_mat_2-laplacian_mat_original)
+    E_2 = compute_E(laplacian_mat_original,laplacian_mat_2,N)
     print('Norm(E) & Small world:',mat_norm(E_2))
-    
+    print('Norm(E) & Small world:{}'.format(mat_norm(E_2)),file=output)
+
     print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
-    
+    print('E_1 over E_2:{}'.format(mat_norm(E_1)/mat_norm(E_2)),file=output)
+
     '''If S is normalized laplacian matrix'''
     print(' If S is normalized laplacian matrix:')
-    
-    E_1 = scipy.linalg.solve_sylvester(nl_ori,nl_ori,norm_laplacian_1-norm_laplacian_original)
+    print(' If S is normalized laplacian matrix:',file=output)
+
+    E_1 = compute_E(norm_laplacian_original,norm_laplacian_1,N)
     print('Norm(E) & Preferential attachment:', mat_norm(E_1))
+    print('Norm(E) & Preferential attachment:{}'.format(mat_norm(E_1)),file=output)
     
-    E_2 = scipy.linalg.solve_sylvester(nl_ori,nl_ori,norm_laplacian_2-norm_laplacian_original)
+    E_2 = compute_E(norm_laplacian_original,norm_laplacian_2,N)
     print('Norm(E) & Small world:',mat_norm(E_2))
-    
+    print('Norm(E) & Small world:{}'.format(mat_norm(E_2)),file=output)
+
     print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
+    print('E_1 over E_2:{}'.format(mat_norm(E_1)/mat_norm(E_2)),file=output)
     
     deg1, cnt1 = deg_count(G_1)
     deg2, cnt2 = deg_count(G_2)
     print('KL-div under preferential attachment', KL_div(deg,cnt,deg1,cnt1))
     print('KL-div under small world', KL_div(deg,cnt,deg2,cnt2))
 
-nx.write_gpickle(G_1,'ws_ba.gpickle')
-nx.write_gpickle(G_2,'ws_ws.gpickle')
+    print('KL-div & Preferential attachment: {}'.format(KL_div(deg,cnt,deg1,cnt1)),file=output)
+    print('KL-div & Small world: {}'.format(KL_div(deg,cnt,deg1,cnt1)),file=output)
+
+output.close()
+
 
