@@ -117,26 +117,26 @@ output = open('test1.txt','w')
 num_batch = 6
 edges_per_batch = 600
 
+'''If original graph is BA graph'''
+#G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
+#G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
+
+'''If original graph is small world graph'''
+G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
+G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
+
+laplacian_mat_original = nx.laplacian_matrix(G_1)
+laplacian_mat_original = laplacian_mat_original.todense()
+
+adj_original = nx.adjacency_matrix(G_1)
+adj_original = adj_original.todense()
+
+norm_laplacian_original = nx.normalized_laplacian_matrix(G_1)
+norm_laplacian_original = norm_laplacian_original.todense()
+
+deg,cnt = deg_count(G_1)
+
 for batch in range(num_batch):
-    
-    '''If original graph is BA graph'''
-    #G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
-    #G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
-
-    '''If original graph is small world graph'''
-    G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
-    G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
-
-    laplacian_mat_original = nx.laplacian_matrix(G_1)
-    laplacian_mat_original = laplacian_mat_original.todense()
-
-    adj_original = nx.adjacency_matrix(G_1)
-    adj_original = adj_original.todense()
-
-    norm_laplacian_original = nx.normalized_laplacian_matrix(G_1)
-    norm_laplacian_original = norm_laplacian_original.todense()
-
-    deg,cnt = deg_count(G_1)
 
     for i in range(edges_per_batch):
         G1 = preferential_add(G_1)
