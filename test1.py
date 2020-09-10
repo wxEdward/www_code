@@ -112,36 +112,40 @@ def KL_div(deg1,cnt1,deg2,cnt2):
 
 N = 5000
 
-'''If original graph is BA graph'''
-#G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
-#G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
-
-'''If original graph is small world graph'''
-G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3)
-G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3)
-
-laplacian_mat_original = nx.laplacian_matrix(G_1)
-laplacian_mat_original = laplacian_mat_original.todense()
-
-adj_original = nx.adjacency_matrix(G_1)
-adj_original = adj_original.todense()
-
-norm_laplacian_original = nx.normalized_laplacian_matrix(G_1)
-norm_laplacian_original = norm_laplacian_original.todense()
-
-deg,cnt = deg_count(G_1)
-
 output = open('test1.txt','w')
 
-for num_edges in np.arange(1000,3200,300):
+num_batch = 6
+edges_per_batch = 600
 
-    for i in range(num_edges):
+for batch in range(num_batch):
+    
+    '''If original graph is BA graph'''
+    #G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
+    #G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
+
+    '''If original graph is small world graph'''
+    G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
+    G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
+
+    laplacian_mat_original = nx.laplacian_matrix(G_1)
+    laplacian_mat_original = laplacian_mat_original.todense()
+
+    adj_original = nx.adjacency_matrix(G_1)
+    adj_original = adj_original.todense()
+
+    norm_laplacian_original = nx.normalized_laplacian_matrix(G_1)
+    norm_laplacian_original = norm_laplacian_original.todense()
+
+    deg,cnt = deg_count(G_1)
+
+    for i in range(edges_per_batch):
         G1 = preferential_add(G_1)
         G2 = small_world_add(G_2)
         #if i%200 == 0 and i!=0:
          #   print('%d edges added'%i)
-    print('%d edges added'%num_edges)
-    print('{} edges added'.format(num_edges),file=output)
+    edges_added = (batch+1)*edges_per_batch
+    print('%d edges added'%edges_added)
+    print('{} edges added'.format(edges_added),file=output)
     laplacian_mat_1 = nx.laplacian_matrix(G_1)
     laplacian_mat_1 = laplacian_mat_1.todense()
     laplacian_mat_2 = nx.laplacian_matrix(G_2)
