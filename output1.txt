@@ -1,0 +1,88 @@
+600 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 131.45286979440127
+Norm(E) & Small world: 101.61985807234505
+E_1 over E_2: 1.2935746249597941
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 222.84860893358115
+Norm(E) & Small world: 200.76041087488062
+E_1 over E_2: 1.1100226780889908
+KL-div under preferential attachment 0.026537683747191787
+KL-div under small world 0.025784061809759413
+1200 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 329.06018722073554
+Norm(E) & Small world: 234.01161213740158
+E_1 over E_2: 1.4061703358016504
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 707.5706483278301
+Norm(E) & Small world: 605.6960462294195
+E_1 over E_2: 1.1681942663033722
+KL-div under preferential attachment 0.08828010155350205
+KL-div under small world 0.09305116782814318
+1800 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 605.0152703803205
+Norm(E) & Small world: 401.8516350606232
+E_1 over E_2: 1.5055687661667674
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 1402.6384693678026
+Norm(E) & Small world: 1094.603451386648
+E_1 over E_2: 1.281412430767448
+KL-div under preferential attachment 0.16617818306633397
+KL-div under small world 0.19980117052375967
+2400 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 963.7471868272477
+Norm(E) & Small world: 613.5221427250293
+E_1 over E_2: 1.570843364424719
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 2215.7706398101673
+Norm(E) & Small world: 1724.9413500670566
+E_1 over E_2: 1.28454839332597
+KL-div under preferential attachment 0.25672987053007457
+KL-div under small world 0.3403298650366159
+3000 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 1388.594197549897
+Norm(E) & Small world: 860.63075392597
+E_1 over E_2: 1.6134610472789839
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 3068.509432703172
+Norm(E) & Small world: 2262.8415552583233
+E_1 over E_2: 1.356042549940212
+KL-div under preferential attachment 0.3574702376064003
+KL-div under small world 0.5222246178358518
+3600 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 1889.0498302863123
+Norm(E) & Small world: 1144.845196017707
+E_1 over E_2: 1.6500482657893731
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 3913.0144041530293
+Norm(E) & Small world: 2653.9319497920146
+E_1 over E_2: 1.4744215293311072
+KL-div under preferential attachment 0.46379589140490035
+KL-div under small world 0.7353594417498978
+4200 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 2456.9435864865904
+Norm(E) & Small world: 1455.3190756217186
+E_1 over E_2: 1.688250795061539
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 4747.421099500391
+Norm(E) & Small world: 2913.591837696622
+E_1 over E_2: 1.629404996979099
+KL-div under preferential attachment 0.5684364316069873
+KL-div under small world 0.9868975683368074
+4800 edges added
+ If S is laplacian matrix:
+Norm(E) & Preferential attachment: 3103.1515313425307
+Norm(E) & Small world: 1792.1775779720342
+E_1 over E_2: 1.7314977988140823
+ If S is normalized laplacian matrix:
+Norm(E) & Preferential attachment: 5649.870955312134
+Norm(E) & Small world: 3039.856110237693
+E_1 over E_2: 1.85859815413117
+KL-div under preferential attachment 0.6745510123230106
+KL-div under small world 1.3090977945203643

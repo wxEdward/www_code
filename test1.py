@@ -80,7 +80,7 @@ def deg_distribution(deg,cnt,size):
     deg_dis = np.zeros(size,dtype=float)
     for i in range(len(deg)):
         deg_dis[deg[i]]= cnt_dis[i]
-    deg = deg + np.finfo(np.float32).eps
+    deg_dis = deg_dis + np.finfo(np.float32).eps
     return deg_dis
 
 def KL_div(deg1,cnt1,deg2,cnt2):
@@ -96,16 +96,16 @@ edges_per_batch = 600
 p = 0.0001
 
 '''If original graph is BA graph'''
-#G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
-#G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,5,100)
+G_1 = nx.generators.random_graphs.barabasi_albert_graph(N,2,100)
+G_2 = nx.generators.random_graphs.barabasi_albert_graph(N,2,100)
 
 '''If original graph is small world graph'''
-G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
-G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
-nx.set_edge_attributes(G_1,0,'timestamp‘)
+#G_1 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
+#G_2 = nx.generators.random_graphs.watts_strogatz_graph(N,4,0.3,100)
+nx.set_edge_attributes(G_1,0,'timestamp')
 nx.set_edge_attributes(G_2,0,'timestamp')
 
-nx.write_gpickle(G_1,'ws_ori.gpickle')
+nx.write_gpickle(G_1,'ba_ori.gpickle')
 
 laplacian_mat_original = nx.laplacian_matrix(G_1)
 laplacian_mat_original = laplacian_mat_original.todense()
@@ -149,13 +149,13 @@ for batch in range(num_batch):
     
     E_1 = scipy.linalg.solve_sylvester(l_ori,l_ori,laplacian_mat_1-laplacian_mat_original)
     print('Norm(E) & Preferential attachment:', mat_norm(E_1))
-    
+   
     E_2 = scipy.linalg.solve_sylvester(l_ori,l_ori,laplacian_mat_2-laplacian_mat_original)
     print('Norm(E) & Small world:',mat_norm(E_2))
     
     print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
-    
-    '''If S is normalized laplacian matrix'''
+
+    '''If S is normalized laplacian matrix''' 
     print(' If S is normalized laplacian matrix:')
     
     E_1 = scipy.linalg.solve_sylvester(nl_ori,nl_ori,norm_laplacian_1-norm_laplacian_original)
@@ -165,12 +165,12 @@ for batch in range(num_batch):
     print('Norm(E) & Small world:',mat_norm(E_2))
     
     print('E_1 over E_2:',mat_norm(E_1)/mat_norm(E_2))
-    
+
     deg1, cnt1 = deg_count(G_1)
     deg2, cnt2 = deg_count(G_2)
     print('KL-div under preferential attachment', KL_div(deg,cnt,deg1,cnt1))
     print('KL-div under small world', KL_div(deg,cnt,deg2,cnt2))
 
-nx.write_gpickle(G_1,'ws_ba.gpickle')
-nx.write_gpickle(G_2,'ws_ws.gpickle')
+nx.write_gpickle(G_1,'ba_ba.gpickle')
+nx.write_gpickle(G_2,'ba_ws.gpickle')
 

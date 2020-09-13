@@ -1,2 +1,0 @@
-This is the first result:10
-Second:20
