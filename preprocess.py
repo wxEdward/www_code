@@ -72,7 +72,7 @@ ws_ori = nx.read_gpickle('ws_ori.gpickle')
 ba_ori_attr = get_features(ba_ori)
 ws_ori_attr = get_features(ws_ori)
 
-nx.write_gpickle(ba_ori_attr,'ba_ori_attr')
-nx.write_gpickle(ws_ori_attr,'ws_ori_attr')
+nx.write_gpickle(ba_ori_attr,'ba_ori_attr.gpickle')
+nx.write_gpickle(ws_ori_attr,'ws_ori_attr.gpickle')
 
 
