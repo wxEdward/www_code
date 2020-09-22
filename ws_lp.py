@@ -14,7 +14,7 @@ edge_attr = ['timestamp']
 
 def load_ws():
     g = nx.read_gpickle('ws_ori_attr.gpickle')
-    g = dgl.from_networkx(g1,node_attr)
+    g = dgl.from_networkx(g,node_attr)
     features = g.ndata['degree']
     for i in node_attr:
         if i != 'degree':
@@ -24,7 +24,7 @@ def load_ws():
 
 def load_ba():
     g = nx.read_gpickle('ba_ori_attr.gpickle')
-    g = dgl.from_networkx(g1,node_attr)
+    g = dgl.from_networkx(g,node_attr)
     features = g.ndata['degree']
     for i in node_attr:
         if i != 'degree':
@@ -152,7 +152,7 @@ def LPEvaluate(gconv_model, g, features, eval_eids, neg_sample_size):
         rankings = torch.sum(neg_score >= pos_score, dim=1) + 1
         return np.mean(1.0/rankings.cpu().numpy())
 
-device = torch.device('cuda:{}'.format(GPU))
+device = torch.device(('cpu', 'cuda')[torch.cuda.is_available()])
 g = load_ws()
 dgl.save_graphs('./ws.bin',g)
 features = g.ndata['features']
