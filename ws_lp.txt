@@ -30,6 +30,7 @@ Epoch 00028 | Loss 71.7253 | MRR 0.2989
 Epoch 00029 | Loss 71.4438 | MRR 0.2900
 
 Test MRR 0.2837
+Add BA:
 New edges batch00001 | MRR 0.2749
 New edges batch00002 | MRR 0.2568
 New edges batch00003 | MRR 0.2685
@@ -38,6 +39,7 @@ New edges batch00005 | MRR 0.2405
 New edges batch00006 | MRR 0.2278
 New edges batch00007 | MRR 0.2193
 New edges batch00008 | MRR 0.2308
+Add WS:
 New edges batch00001 | MRR 0.2813
 New edges batch00002 | MRR 0.2829
 New edges batch00003 | MRR 0.2822
