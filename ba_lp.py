@@ -8,31 +8,33 @@ import networkx as nx
 dgl.load_backend('pytorch')
 import numpy as np
 from dgl.nn.pytorch import conv as dgl_conv
-
+from dgl.data.utils import save_graphs,load_graphs
 node_attr = ['degree','betweenness_centrality','path_len','pagerank','node_clustering_coefficient','identity']
 edge_attr = ['timestamp']
 
-device = torch.device(('cpu', 'cuda')[torch.cuda.is_available()])
-
 def load_ws():
     g = nx.read_gpickle('ws_ori_attr.gpickle')
-    g = dgl.from_networkx(g,node_attr)
-    features = g.ndata['degree']
+    g1 = dgl.DGLGraph()
+    g1.from_networkx(g,node_attr)
+    features = g1.ndata['degree']
     for i in node_attr:
         if i != 'degree':
-            features = torch.cat((features,g.ndata[i].view(5000,-1)),1)
-    g.ndata['features'] = features
-    return g
+            features = torch.cat((features,g1.ndata[i].view(5000,-1)),1)
+    features = features.float()
+    g1.ndata['features'] = features
+    return g1
 
 def load_ba():
     g = nx.read_gpickle('ba_ori_attr.gpickle')
-    g = dgl.from_networkx(g,node_attr)
-    features = g.ndata['degree']
+    g1 = dgl.DGLGraph()
+    g1.from_networkx(g,node_attr)
+    features = g1.ndata['degree']
     for i in node_attr:
         if i != 'degree':
-            features = torch.cat((features,g.ndata[i].view(5000,-1)),1)
-    g.ndata['features'] = features
-    return g
+            features = torch.cat((features,g1.ndata[i].view(5000,-1)),1)
+    features = features.float()
+    g1.ndata['features'] = features
+    return g1
 
 def ws_ba_add(g,t):
     G_ba = nx.read_gpickle('ws_ba.gpickle')
@@ -145,8 +147,7 @@ def LPEvaluate(gconv_model, g, features, eval_eids, neg_sample_size):
         pos_g, neg_g = edge_sampler(g, neg_sample_size, eval_eids, return_false_neg=True)
         pos_score = score_func(pos_g, emb)
         neg_score = score_func(neg_g, emb).reshape(-1, neg_sample_size)
-        filter_bias = neg_g.edata['false_neg'].reshape(-1, neg_sample_size)
-
+        filter_bias = neg_g.edata['false_neg'].reshape(-1, neg_sample_size).to(device)
         pos_score = F.logsigmoid(pos_score)
         neg_score = F.logsigmoid(neg_score)
         neg_score -= filter_bias.float()
@@ -154,11 +155,13 @@ def LPEvaluate(gconv_model, g, features, eval_eids, neg_sample_size):
         rankings = torch.sum(neg_score >= pos_score, dim=1) + 1
         return np.mean(1.0/rankings.cpu().numpy())
 
-device = torch.device('cuda:{}'.format(GPU))
-
+device = torch.device(('cpu', 'cuda')[torch.cuda.is_available()])
 g = load_ba()
-dgl.save_graphs('./ba.bin',g)
+g = g.to(device)
+g.readonly()
+save_graphs('./ba.bin',g)
 features = g.ndata['features']
+features = features.to(device)
 in_feats = g.ndata['features'].shape[1]
 
 #Model hyperparameters
@@ -175,7 +178,6 @@ gconv_model = GraphSAGEModel(in_feats,
                              F.relu,
                              dropout,
                              aggregator_type)
-
 eids = np.random.permutation(g.number_of_edges())
 train_eids = eids[:int(len(eids) * 0.8)]
 valid_eids = eids[int(len(eids) * 0.8):int(len(eids) * 0.9)]
@@ -183,8 +185,7 @@ test_eids = eids[int(len(eids) * 0.9):]
 train_g = g.edge_subgraph(train_eids, preserve_nodes=True)
 
 # Model for link prediction
-model = LinkPrediction(gconv_model)
-model.to(device)
+model = LinkPrediction(gconv_model).to(device)
 # Training hyperparameters
 weight_decay = 5e-4
 n_epochs = 30
@@ -210,26 +211,30 @@ print()
 acc = LPEvaluate(gconv_model, g, features, test_eids, neg_sample_size)
 print("Test MRR {:.4f}".format(acc))
 
-torch.save(gconv_model,'gconv.pt')
-torch.save(model,'model.pt')
+torch.save(gconv_model,'ba_gconv.pt')
+torch.save(model,'ba_model.pt')
 
 
 num_new_batch_nodes = 8
-for t in range(1,num_new_batch_nodes):
+for t in range(1,num_new_batch_nodes+1):
+    g.readonly(False)
     g = ba_ws_add(g,t)
+    g.readonly()
     eids = np.random.permutation(g.number_of_edges())
     valid_eids = eids[int(len(eids) * 0.8):int(len(eids) * 0.9)]
     acc = LPEvaluate(gconv_model, g, features, valid_eids, neg_sample_size)
-    print("New edges batch{:05d) | MRR {:.4f}".format(t,acc))
+    print("New edges batch{:05d} | MRR {:.4f}".format(t,acc))
 
-g1 = dgl.load('./ba.bin')
-
-for t in range(1,num_new_batch_nodes):
+g1 = load_graphs('./ba.bin')[0][0]
+g1 = g1.to(device)
+for t in range(1,num_new_batch_nodes+1):
+    g1.readonly(False)
     g1 = ba_ba_add(g1,t)
+    g1.readonly()
     eids = np.random.permutation(g1.number_of_edges())
     valid_eids = eids[int(len(eids) * 0.8):int(len(eids) * 0.9)]
     acc = LPEvaluate(gconv_model, g1, features, valid_eids, neg_sample_size)
-    print("New edges batch{:05d) | MRR {:.4f}".format(t,acc))
+    print("New edges batch{:05d} | MRR {:.4f}".format(t,acc))
 
 
 
