@@ -12,25 +12,25 @@ from dgl.nn.pytorch import conv as dgl_conv
 node_attr = ['degree','betweenness_centrality','path_len','pagerank','node_clustering_coefficient','identity']
 edge_attr = ['timestamp']
 
-device =
+device = torch.device(('cpu', 'cuda')[torch.cuda.is_available()])
 
 def load_ws():
     g = nx.read_gpickle('ws_ori_attr.gpickle')
-    g = dgl.from_networkx(g1,node_attr)
+    g = dgl.from_networkx(g,node_attr)
     features = g.ndata['degree']
     for i in node_attr:
         if i != 'degree':
-            features = th.cat((features,g.ndata[i].view(5000,-1)),1)
+            features = torch.cat((features,g.ndata[i].view(5000,-1)),1)
     g.ndata['features'] = features
     return g
 
 def load_ba():
     g = nx.read_gpickle('ba_ori_attr.gpickle')
-    g = dgl.from_networkx(g1,node_attr)
+    g = dgl.from_networkx(g,node_attr)
     features = g.ndata['degree']
     for i in node_attr:
         if i != 'degree':
-            features = th.cat((features,g.ndata[i].view(5000,-1)),1)
+            features = torch.cat((features,g.ndata[i].view(5000,-1)),1)
     g.ndata['features'] = features
     return g
 

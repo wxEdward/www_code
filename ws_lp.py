@@ -18,7 +18,7 @@ def load_ws():
     features = g.ndata['degree']
     for i in node_attr:
         if i != 'degree':
-            features = th.cat((features,g.ndata[i].view(5000,-1)),1)
+            features = torch.cat((features,g.ndata[i].view(5000,-1)),1)
     g.ndata['features'] = features
     return g
 
@@ -28,7 +28,7 @@ def load_ba():
     features = g.ndata['degree']
     for i in node_attr:
         if i != 'degree':
-            features = th.cat((features,g.ndata[i].view(5000,-1)),1)
+            features = torch.cat((features,g.ndata[i].view(5000,-1)),1)
     g.ndata['features'] = features
     return g
 
