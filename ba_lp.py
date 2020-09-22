@@ -12,6 +12,8 @@ from dgl.nn.pytorch import conv as dgl_conv
 node_attr = ['degree','betweenness_centrality','path_len','pagerank','node_clustering_coefficient','identity']
 edge_attr = ['timestamp']
 
+device =
+
 def load_ws():
     g = nx.read_gpickle('ws_ori_attr.gpickle')
     g = dgl.from_networkx(g1,node_attr)
@@ -152,6 +154,7 @@ def LPEvaluate(gconv_model, g, features, eval_eids, neg_sample_size):
         rankings = torch.sum(neg_score >= pos_score, dim=1) + 1
         return np.mean(1.0/rankings.cpu().numpy())
 
+device = torch.device('cuda:{}'.format(GPU))
 
 g = load_ba()
 dgl.save_graphs('./ba.bin',g)
@@ -181,7 +184,7 @@ train_g = g.edge_subgraph(train_eids, preserve_nodes=True)
 
 # Model for link prediction
 model = LinkPrediction(gconv_model)
-
+model.to(device)
 # Training hyperparameters
 weight_decay = 5e-4
 n_epochs = 30
