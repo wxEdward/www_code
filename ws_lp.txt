@@ -1,0 +1,48 @@
+Epoch 00000 | Loss 300.1736 | MRR 0.1664
+Epoch 00001 | Loss 191.0768 | MRR 0.1886
+Epoch 00002 | Loss 130.8753 | MRR 0.2151
+Epoch 00003 | Loss 102.1811 | MRR 0.2311
+Epoch 00004 | Loss 88.7494 | MRR 0.2406
+Epoch 00005 | Loss 82.5929 | MRR 0.2411
+Epoch 00006 | Loss 80.8244 | MRR 0.2446
+Epoch 00007 | Loss 81.8060 | MRR 0.2460
+Epoch 00008 | Loss 82.5999 | MRR 0.2426
+Epoch 00009 | Loss 84.0613 | MRR 0.2471
+Epoch 00010 | Loss 84.7917 | MRR 0.2527
+Epoch 00011 | Loss 84.2434 | MRR 0.2514
+Epoch 00012 | Loss 82.8400 | MRR 0.2634
+Epoch 00013 | Loss 81.7458 | MRR 0.2667
+Epoch 00014 | Loss 79.9260 | MRR 0.2729
+Epoch 00015 | Loss 78.2707 | MRR 0.2796
+Epoch 00016 | Loss 76.8493 | MRR 0.2827
+Epoch 00017 | Loss 75.7424 | MRR 0.2824
+Epoch 00018 | Loss 74.7889 | MRR 0.2903
+Epoch 00019 | Loss 74.1575 | MRR 0.2886
+Epoch 00020 | Loss 73.4962 | MRR 0.2884
+Epoch 00021 | Loss 73.0146 | MRR 0.2857
+Epoch 00022 | Loss 72.6893 | MRR 0.2833
+Epoch 00023 | Loss 72.4748 | MRR 0.2897
+Epoch 00024 | Loss 72.2408 | MRR 0.2911
+Epoch 00025 | Loss 72.1778 | MRR 0.2865
+Epoch 00026 | Loss 71.9732 | MRR 0.2933
+Epoch 00027 | Loss 71.8128 | MRR 0.3009
+Epoch 00028 | Loss 71.7253 | MRR 0.2989
+Epoch 00029 | Loss 71.4438 | MRR 0.2900
+
+Test MRR 0.2837
+New edges batch00001 | MRR 0.2749
+New edges batch00002 | MRR 0.2568
+New edges batch00003 | MRR 0.2685
+New edges batch00004 | MRR 0.2503
+New edges batch00005 | MRR 0.2405
+New edges batch00006 | MRR 0.2278
+New edges batch00007 | MRR 0.2193
+New edges batch00008 | MRR 0.2308
+New edges batch00001 | MRR 0.2813
+New edges batch00002 | MRR 0.2829
+New edges batch00003 | MRR 0.2822
+New edges batch00004 | MRR 0.2877
+New edges batch00005 | MRR 0.2895
+New edges batch00006 | MRR 0.3001
+New edges batch00007 | MRR 0.3019
+New edges batch00008 | MRR 0.3020
